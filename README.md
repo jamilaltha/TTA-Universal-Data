@@ -1,68 +1,54 @@
-# TTA Universal Dataset — V0.1
-**A multi-domain, IA-ready scientific dataset linking SPARC, SDSS, and official data sources across cosmology, astrophysics, finance, quantum computing, QKD, and high-energy physics.**
 
-This repository contains the **first unified dataset** structured for research on the **TTA (Tejido Telaraña del Espacio-Tiempo / Nodal Critical Web)** hypothesis.  
-The dataset consolidates **real observational/experimental data** where available, and includes **verified external sources** for domains whose data is too large to bundle directly.
+Plantillas APA, Chicago y BibTeX en: **Citing the Dataset** (Wiki).
 
 ---
 
-#  Dataset Included
-## **1. SPARC (Real Data Included)**
-Full SPARC 175-galaxy rotational curves and metadata.
+##  Validación
 
-- Local file included:
-  - `SPARC_MASTER_FULL.jsonl`
-- Original source:
-  - http://astroweb.cwru.edu/SPARC/SPARC_Lelli2016c_AllTables.tar.gz
+El dataset ha pasado por:
 
----
+- validación sintáctica  
+- validación estructural  
+- verificación de dominios  
+- verificación de URLs  
+- detección de duplicados  
+- validación contextual (SPARC / SDSS)
 
-## **2. SDSS DR12 Spectroscopic Sample (Real Data Included)**
-Spectroscopic cross-matches retrieved via SDSS DR12 CrossID.
-
-- Local file included:
-  - `SDSS_TTA_SAMPLE.jsonl`
-- Original source:
-  - http://skyserver.sdss.org/dr12/en/tools/crossid/crossid.aspx
+Documentación completa: **Validation Pipeline** (Wiki).
 
 ---
 
-## **3. Additional Domains (Links Only, No Invented Data)**
+##  Contribuciones
 
-### **FOREX**
-- https://www.dukascopy.com/datafeed/EURUSD/
-- https://www.histdata.com/download-free-forex-historical-data/?/metatrader/1-minute-bar-quotes
-- https://fred.stlouisfed.org/series/DTWEXBGS
-
-### **FINANCE (S&P500, Dow Jones, NASDAQ)**
-- https://fred.stlouisfed.org/series/SP500
-- https://www.macrotrends.net/1319/dow-jones-100-year-historical-chart
-- https://finance.yahoo.com/
-
-### **CMB (Planck, ACT, SPT)**
-- https://pla.esac.esa.int/#cosmology
-- https://lambda.gsfc.nasa.gov/product/act/
-- https://pole.uchicago.edu/spt/public/data/
-
-### **LHC (ATLAS, CMS, ALICE, LHCb Open Data)**
-- http://opendata.atlas.cern/release/2025
-- https://cds.cern.ch/
-- https://hepdata.net/
-
-### **Quantum Computing (IBM, Google, IonQ, Rigetti)**
-- https://quantum-computing.ibm.com/
-- https://quantumai.google/
-- https://ionq.com/
-- https://rigetti.com/
-
-### **Quantum Cryptography (QKD / Micius / QIA / IDQ)**
-- https://alice-publications.web.cern.ch/
-- https://www.idquantique.com/
-- https://quantuminternetalliance.org/
-
-### **Cosmology (Cosmicflows-4, SH0ES)**
-- http://edd.ifa.hawaii.edu/cf4/cf4_table2.csv
-- https://arxiv.org/abs/2503.04837
+Las contribuciones son bienvenidas bajo reglas estrictas de reproducibilidad y coherencia científica.  
+Ver: **Contributing Guidelines** (Wiki).
 
 ---
+
+##  Licencia
+
+Este repositorio está publicado bajo la licencia **MIT**, salvo indicación contraria en fuentes externas.
+
+---
+
+##  Roadmap
+
+Las etapas próximas del proyecto incluyen:
+
+- v0.2.0 con expansión de dominios
+- Integración automática con Zenodo
+- Normalización ampliada del JSONL
+- Validaciones avanzadas por dominio
+- Primera versión mayor (v1.0.0)
+
+Más detalles en la página **Roadmap** del Wiki.
+
+---
+
+##  Estado actual
+
+- Dataset listo (v0.1.0)
+- Validado científicamente
+- Documentación completa en Wiki
+- Preparado para publicación en Zenodo
 
