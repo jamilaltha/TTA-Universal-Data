@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+title: "TTA-Universal-Dataset"
+message: "If you use this dataset, please cite it using the metadata below."
+type: dataset
+
+authors:
+  - family-names: "quantumd10z-ctrl"
+    given-names: ""
+
+abstract: >
+  A unified, validated and structured dataset integrating multi-domain scientific data
+  under the TTA nodal-space framework. Includes astronomy (SPARC, SDSS), cosmology
+  (CMB, CF4), particle physics (LHC), financial markets (FRED, CBOE, BTC), and quantum
+  datasets (IBMQ, GoogleQ, QKD). Designed for reproducible scientific analysis and
+  AI pipelines.
+
+keywords:
+  - TTA
+  - nodal model
+  - cosmology
+  - astronomy
+  - SPARC
+  - SDSS
+  - LHC
+  - CMB
+  - quantum computing
+  - physics
+  - dataset
+
+version: "0.1.0"
+
+license: "MIT"
+
+url: "https://github.com/quantumd10z-ctrl/TTA-Universal-Dataset"
+
+repository-code: "https://github.com/quantumd10z-ctrl/TTA-Universal-Dataset"
+
+doi: "10.XXXX/zenodo.XXXXXXX"
