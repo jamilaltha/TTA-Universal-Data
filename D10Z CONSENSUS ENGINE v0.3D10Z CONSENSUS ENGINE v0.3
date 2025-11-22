@@ -1,0 +1,382 @@
+import React, { useState, useEffect } from 'react';
+import { Play, Pause, RotateCcw, Download, AlertCircle, CheckCircle, TrendingDown } from 'lucide-react';
+
+const D10ZConsensusEngine = () => {
+  const [isRunning, setIsRunning] = useState(false);
+  const [iteration, setIteration] = useState(0);
+  const [nodes, setNodes] = useState([]);
+  const [integrity, setIntegrity] = useState(1.0);
+  const [energy, setEnergy] = useState(0);
+  const [converged, setConverged] = useState(false);
+  const [log, setLog] = useState([]);
+  const [hashChain, setHashChain] = useState([]);
+  
+  // Parámetros del sistema
+  const [N, setN] = useState(20);
+  const [gamma, setGamma] = useState(0.1);
+  const [alpha, setAlpha] = useState(0.5);
+  const [beta, setBeta] = useState(1.0);
+  const epsilon = 1e-5;
+
+  // Inicializar sistema
+  const initializeSystem = () => {
+    const newNodes = Array.from({ length: N }, (_, i) => ({
+      id: i,
+      Z: Math.random() * 0.8 + 0.2, // [0.2, 1.0]
+      Z_hat: 0,
+      color: `hsl(${Math.random() * 360}, 70%, 60%)`
+    }));
+    
+    setNodes(newNodes);
+    setIteration(0);
+    setIntegrity(1.0);
+    setConverged(false);
+    setLog(['Sistema inicializado con N=' + N + ' nodos']);
+    
+    // Hash inicial
+    const hash0 = computeHash({ nodes: newNodes.map(n => n.Z), params: { N, gamma, alpha, beta } });
+    setHashChain([hash0]);
+    addLog(`HASH-0: ${hash0.substring(0, 16)}...`);
+  };
+
+  useEffect(() => {
+    initializeSystem();
+  }, []);
+
+  // Función hash simplificada (SHA-256 simulado)
+  const computeHash = (data) => {
+    const str = JSON.stringify(data);
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16).padStart(16, '0');
+  };
+
+  // Calcular matriz de conectividad C_ij
+  const computeConnectivity = (nodesData) => {
+    const C = Array(N).fill(0).map(() => Array(N).fill(0));
+    
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        // D_JS simulado (distancia entre nodos)
+        const d_js = Math.abs(nodesData[i].Z - nodesData[j].Z);
+        // C_ij = (Z_i * Z_j)^α * exp(-β * d_js)
+        const c_ij = Math.pow(nodesData[i].Z * nodesData[j].Z, alpha) * Math.exp(-beta * d_js);
+        C[i][j] = c_ij;
+        C[j][i] = c_ij;
+      }
+    }
+    
+    return C;
+  };
+
+  // Calcular Z_hat (estado de consenso esperado)
+  const computeConsensus = (nodesData, C) => {
+    return nodesData.map((node, i) => {
+      let sum_CZ = 0;
+      let sum_C = 0;
+      
+      for (let j = 0; j < N; j++) {
+        if (i !== j) {
+          sum_CZ += C[i][j] * nodesData[j].Z;
+          sum_C += C[i][j];
+        }
+      }
+      
+      return sum_C > 0 ? sum_CZ / sum_C : node.Z;
+    });
+  };
+
+  // Calcular integridad I(t)
+  const computeIntegrity = (nodesData) => {
+    const mean = nodesData.reduce((sum, n) => sum + n.Z, 0) / N;
+    const variance = nodesData.reduce((sum, n) => sum + Math.pow(n.Z - mean, 2), 0) / N;
+    return variance;
+  };
+
+  // Calcular energía W
+  const computeEnergy = (nodesData, C) => {
+    let W = 0;
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        W += C[i][j] * Math.pow(nodesData[i].Z - nodesData[j].Z, 2);
+      }
+    }
+    return W / 2;
+  };
+
+  const addLog = (message) => {
+    setLog(prev => [...prev.slice(-9), `[${iteration}] ${message}`]);
+  };
+
+  // Paso de simulación
+  const step = () => {
+    setNodes(prevNodes => {
+      const C = computeConnectivity(prevNodes);
+      const Z_hats = computeConsensus(prevNodes, C);
+      
+      // Actualizar Z: dZ/dt = -γ(Z - Z_hat)
+      const newNodes = prevNodes.map((node, i) => ({
+        ...node,
+        Z_hat: Z_hats[i],
+        Z: node.Z - gamma * (node.Z - Z_hats[i])
+      }));
+      
+      // Calcular métricas
+      const I = computeIntegrity(newNodes);
+      const W = computeEnergy(newNodes, C);
+      
+      setIntegrity(I);
+      setEnergy(W);
+      
+      // Verificar convergencia
+      if (I < epsilon && !converged) {
+        setConverged(true);
+        const finalHash = computeHash({ 
+          final_state: newNodes.map(n => n.Z), 
+          iterations: iteration + 1,
+          integrity: I 
+        });
+        setHashChain(prev => [...prev, finalHash]);
+        addLog(`✓ CONVERGENCIA ALCANZADA - I=${I.toExponential(2)}`);
+        addLog(`HASH-FINAL: ${finalHash.substring(0, 16)}...`);
+        setIsRunning(false);
+      } else if ((iteration + 1) % 10 === 0) {
+        addLog(`Iter ${iteration + 1}: I=${I.toFixed(6)}, W=${W.toFixed(4)}`);
+      }
+      
+      return newNodes;
+    });
+    
+    setIteration(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    let timer;
+    if (isRunning && !converged) {
+      timer = setInterval(step, 50);
+    }
+    return () => clearInterval(timer);
+  }, [isRunning, converged, iteration]);
+
+  const exportData = () => {
+    const data = {
+      framework: "D10Z-Core-v0.3",
+      timestamp: new Date().toISOString(),
+      parameters: { N, gamma, alpha, beta, epsilon },
+      final_state: nodes.map(n => ({ id: n.id, Z: n.Z })),
+      metrics: { iteration, integrity, energy, converged },
+      hash_chain: hashChain,
+      log: log
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `d10z_run_${Date.now()}.json`;
+    a.click();
+  };
+
+  return (
+    <div className="w-full h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-4 overflow-auto">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-6">
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-400">
+            D10Z CONSENSUS ENGINE v0.3
+          </h1>
+          <p className="text-slate-300">Mathematical Framework for Breaking Information Carousels</p>
+        </div>
+
+        {/* Controles */}
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 mb-4 border border-slate-700">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label className="text-sm text-slate-400">Nodos (N)</label>
+              <input 
+                type="number" 
+                value={N} 
+                onChange={(e) => setN(Math.max(5, Math.min(50, parseInt(e.target.value) || 20)))}
+                className="w-full bg-slate-700 rounded px-3 py-2 mt-1"
+                disabled={isRunning}
+              />
+            </div>
+            <div>
+              <label className="text-sm text-slate-400">Gamma (γ)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                value={gamma} 
+                onChange={(e) => setGamma(parseFloat(e.target.value) || 0.1)}
+                className="w-full bg-slate-700 rounded px-3 py-2 mt-1"
+                disabled={isRunning}
+              />
+            </div>
+            <div>
+              <label className="text-sm text-slate-400">Alpha (α)</label>
+              <input 
+                type="number" 
+                step="0.1"
+                value={alpha} 
+                onChange={(e) => setAlpha(parseFloat(e.target.value) || 0.5)}
+                className="w-full bg-slate-700 rounded px-3 py-2 mt-1"
+                disabled={isRunning}
+              />
+            </div>
+            <div>
+              <label className="text-sm text-slate-400">Beta (β)</label>
+              <input 
+                type="number" 
+                step="0.1"
+                value={beta} 
+                onChange={(e) => setBeta(parseFloat(e.target.value) || 1.0)}
+                className="w-full bg-slate-700 rounded px-3 py-2 mt-1"
+                disabled={isRunning}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setIsRunning(!isRunning)}
+              disabled={converged}
+              className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-600 px-4 py-2 rounded transition"
+            >
+              {isRunning ? <Pause size={18} /> : <Play size={18} />}
+              {isRunning ? 'Pausar' : 'Ejecutar'}
+            </button>
+            <button
+              onClick={initializeSystem}
+              className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded transition"
+            >
+              <RotateCcw size={18} />
+              Reiniciar
+            </button>
+            <button
+              onClick={exportData}
+              className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 px-4 py-2 rounded transition ml-auto"
+            >
+              <Download size={18} />
+              Exportar Datos
+            </button>
+          </div>
+        </div>
+
+        {/* Métricas */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <div className="text-slate-400 text-sm mb-1">Iteración</div>
+            <div className="text-2xl font-bold">{iteration}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <div className="text-slate-400 text-sm mb-1 flex items-center gap-2">
+              <TrendingDown size={16} />
+              Integridad I(t)
+            </div>
+            <div className="text-2xl font-bold">{integrity.toExponential(2)}</div>
+            <div className="text-xs text-slate-500 mt-1">Target: &lt; {epsilon.toExponential(0)}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <div className="text-slate-400 text-sm mb-1">Energía W</div>
+            <div className="text-2xl font-bold">{energy.toFixed(4)}</div>
+          </div>
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <div className="text-slate-400 text-sm mb-1">Estado</div>
+            <div className="flex items-center gap-2">
+              {converged ? (
+                <>
+                  <CheckCircle className="text-green-400" size={20} />
+                  <span className="text-green-400 font-bold">Convergido</span>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="text-yellow-400" size={20} />
+                  <span className="text-yellow-400 font-bold">Activo</span>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Visualización */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Gráfico de nodos */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <h3 className="text-lg font-semibold mb-3">Estados Nodales Z_i</h3>
+            <div className="h-64 relative">
+              <svg width="100%" height="100%" className="overflow-visible">
+                {nodes.map((node, i) => {
+                  const x = 50 + (i % 5) * 80;
+                  const y = 50 + Math.floor(i / 5) * 50;
+                  const radius = 15 + node.Z * 15;
+                  
+                  return (
+                    <g key={node.id}>
+                      <circle
+                        cx={x}
+                        cy={y}
+                        r={radius}
+                        fill={node.color}
+                        opacity={0.6 + node.Z * 0.4}
+                        className="transition-all duration-100"
+                      />
+                      <text
+                        x={x}
+                        y={y}
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className="text-xs font-bold fill-white"
+                      >
+                        {node.Z.toFixed(2)}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+          </div>
+
+          {/* Log de eventos */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+            <h3 className="text-lg font-semibold mb-3">Log de Sistema</h3>
+            <div className="h-64 overflow-y-auto font-mono text-xs space-y-1">
+              {log.map((entry, i) => (
+                <div key={i} className="text-slate-300">{entry}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Hash Chain */}
+        <div className="mt-4 bg-slate-800/50 backdrop-blur-sm rounded-lg p-4 border border-slate-700">
+          <h3 className="text-lg font-semibold mb-3">Cadena de Hashes Verificables</h3>
+          <div className="space-y-2 font-mono text-sm">
+            {hashChain.map((hash, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="text-cyan-400">HASH-{i}:</span>
+                <span className="text-slate-300">{hash}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Ecuación */}
+        <div className="mt-4 bg-gradient-to-r from-purple-900/50 to-cyan-900/50 backdrop-blur-sm rounded-lg p-4 border border-purple-700">
+          <h3 className="text-lg font-semibold mb-2">Ecuación Dinámica Unificada</h3>
+          <div className="font-mono text-sm text-center">
+            dZ<sub>i</sub>/dt = -γ (Z<sub>i</sub> - Ẑ<sub>i</sub>)
+          </div>
+          <div className="text-xs text-slate-400 text-center mt-2">
+            Donde Ẑ<sub>i</sub> = Σ<sub>j</sub> C<sub>ij</sub>Z<sub>j</sub> / Σ<sub>j</sub> C<sub>ij</sub>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default D10ZConsensusEngine;
