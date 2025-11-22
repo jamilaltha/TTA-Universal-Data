@@ -1,0 +1,497 @@
+import React, { useState, useEffect } from 'react';
+import { Search, GitBranch, FileText, AlertTriangle, CheckCircle2, TrendingUp, Download, ArrowRight } from 'lucide-react';
+
+const D10ZCorpusAnalyzer = () => {
+  const [selectedCorpus, setSelectedCorpus] = useState('arxiv');
+  const [analyzing, setAnalyzing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [results, setResults] = useState(null);
+  const [bridges, setBridges] = useState([]);
+  const [log, setLog] = useState([]);
+
+  // Definición de corpus
+  const corpora = {
+    arxiv: {
+      name: 'arXiv: Theory of Everything',
+      icon: FileText,
+      color: 'from-blue-500 to-cyan-500',
+      description: 'Papers sobre teorías unificadas de física',
+      sampleDocs: [
+        { id: 'arxiv:2301.01234', title: 'String Theory and Quantum Gravity', Z: 0.72, cluster: 'A' },
+        { id: 'arxiv:2302.05678', title: 'Loop Quantum Gravity Approach', Z: 0.68, cluster: 'B' },
+        { id: 'arxiv:2303.09012', title: 'M-Theory Compactifications', Z: 0.75, cluster: 'A' },
+        { id: 'arxiv:2304.03456', title: 'Causal Set Theory', Z: 0.45, cluster: 'C' },
+        { id: 'arxiv:2305.07890', title: 'Asymptotic Safety in Gravity', Z: 0.52, cluster: 'B' },
+        { id: 'arxiv:2306.01122', title: 'E8 Theory and Unification', Z: 0.38, cluster: 'D' },
+        { id: 'arxiv:2307.04455', title: 'Holographic Principle', Z: 0.71, cluster: 'A' },
+        { id: 'arxiv:2308.08899', title: 'Twistor Theory Applications', Z: 0.49, cluster: 'C' }
+      ],
+      expectedLambda2: 0.042,
+      fragmentationLevel: 'CRÍTICA'
+    },
+    github: {
+      name: 'GitHub: ML Frameworks',
+      icon: GitBranch,
+      color: 'from-purple-500 to-pink-500',
+      description: 'Repositorios de frameworks de Machine Learning',
+      sampleDocs: [
+        { id: 'tensorflow/tensorflow', title: 'TensorFlow Core', Z: 0.89, cluster: 'A' },
+        { id: 'pytorch/pytorch', title: 'PyTorch Framework', Z: 0.91, cluster: 'A' },
+        { id: 'keras-team/keras', title: 'Keras High-level API', Z: 0.82, cluster: 'A' },
+        { id: 'scikit-learn/scikit-learn', title: 'Scikit-learn', Z: 0.76, cluster: 'B' },
+        { id: 'jax/jax', title: 'JAX Autodiff', Z: 0.73, cluster: 'A' },
+        { id: 'microsoft/onnx', title: 'ONNX Runtime', Z: 0.68, cluster: 'C' },
+        { id: 'apache/mxnet', title: 'Apache MXNet', Z: 0.45, cluster: 'D' },
+        { id: 'chainer/chainer', title: 'Chainer (deprecated)', Z: 0.31, cluster: 'D' }
+      ],
+      expectedLambda2: 0.156,
+      fragmentationLevel: 'MODERADA'
+    },
+    medical: {
+      name: 'Medical: Controversial Treatments',
+      icon: Search,
+      color: 'from-red-500 to-orange-500',
+      description: 'Literatura sobre tratamientos médicos controversiales',
+      sampleDocs: [
+        { id: 'pubmed:33445678', title: 'Ivermectin for COVID-19: Meta-analysis', Z: 0.62, cluster: 'A' },
+        { id: 'pubmed:34556789', title: 'Ivermectin: No significant effect', Z: 0.71, cluster: 'B' },
+        { id: 'pubmed:35667890', title: 'Hydroxychloroquine efficacy study', Z: 0.48, cluster: 'A' },
+        { id: 'pubmed:36778901', title: 'HCQ: Negative results in RCT', Z: 0.75, cluster: 'B' },
+        { id: 'pubmed:37889012', title: 'Vitamin D supplementation outcomes', Z: 0.58, cluster: 'C' },
+        { id: 'pubmed:38990123', title: 'Homeopathy systematic review', Z: 0.33, cluster: 'D' },
+        { id: 'pubmed:39001234', title: 'Acupuncture pain management', Z: 0.52, cluster: 'C' },
+        { id: 'pubmed:40112345', title: 'Cannabinoids therapeutic potential', Z: 0.64, cluster: 'C' }
+      ],
+      expectedLambda2: 0.028,
+      fragmentationLevel: 'EXTREMA'
+    }
+  };
+
+  const addLog = (message, type = 'info') => {
+    const timestamp = new Date().toLocaleTimeString();
+    setLog(prev => [...prev, { time: timestamp, message, type }]);
+  };
+
+  const computeConnectivity = (docs) => {
+    const N = docs.length;
+    const C = Array(N).fill(0).map(() => Array(N).fill(0));
+    
+    for (let i = 0; i < N; i++) {
+      for (let j = i + 1; j < N; j++) {
+        // Conectividad basada en cluster y Z
+        const sameCluster = docs[i].cluster === docs[j].cluster ? 1 : 0.1;
+        const zProduct = Math.pow(docs[i].Z * docs[j].Z, 0.5);
+        const semanticDistance = Math.abs(docs[i].Z - docs[j].Z);
+        
+        const c_ij = sameCluster * zProduct * Math.exp(-semanticDistance);
+        C[i][j] = c_ij;
+        C[j][i] = c_ij;
+      }
+    }
+    
+    return C;
+  };
+
+  const computeLaplacian = (C) => {
+    const N = C.length;
+    const L = Array(N).fill(0).map(() => Array(N).fill(0));
+    
+    for (let i = 0; i < N; i++) {
+      const degree = C[i].reduce((sum, val) => sum + val, 0);
+      L[i][i] = degree;
+      for (let j = 0; j < N; j++) {
+        if (i !== j) L[i][j] = -C[i][j];
+      }
+    }
+    
+    return L;
+  };
+
+  const computeEigenvalues = (L) => {
+    // Simplificación: calcular eigenvalues aproximados
+    const N = L.length;
+    const trace = L.reduce((sum, row, i) => sum + row[i], 0);
+    const sumSquares = L.reduce((sum, row) => 
+      sum + row.reduce((s, val) => s + val * val, 0), 0);
+    
+    // Estimación simple de λ_2 (segundo eigenvalor)
+    const lambda2_approx = (trace - Math.sqrt(Math.max(0, trace * trace - 2 * sumSquares))) / N;
+    
+    return [0, Math.max(0.001, lambda2_approx)]; // [λ_1, λ_2]
+  };
+
+  const generateBridges = (docs, C, lambda2) => {
+    const bridges = [];
+    const N = docs.length;
+    
+    // Identificar pares de clusters desconectados
+    const clusters = [...new Set(docs.map(d => d.cluster))];
+    
+    for (let i = 0; i < clusters.length; i++) {
+      for (let j = i + 1; j < clusters.length; j++) {
+        const clusterA = clusters[i];
+        const clusterB = clusters[j];
+        
+        const docsA = docs.filter(d => d.cluster === clusterA);
+        const docsB = docs.filter(d => d.cluster === clusterB);
+        
+        // Calcular conectividad promedio entre clusters
+        let avgConnectivity = 0;
+        let count = 0;
+        
+        docsA.forEach(dA => {
+          docsB.forEach(dB => {
+            const idxA = docs.indexOf(dA);
+            const idxB = docs.indexOf(dB);
+            avgConnectivity += C[idxA][idxB];
+            count++;
+          });
+        });
+        
+        avgConnectivity /= count;
+        
+        if (avgConnectivity < 0.2) {
+          bridges.push({
+            id: `bridge_${clusterA}_${clusterB}`,
+            from: clusterA,
+            to: clusterB,
+            currentC: avgConnectivity,
+            targetC: 0.45,
+            docs: [docsA[0].title, docsB[0].title],
+            content: generateBridgeContent(docsA[0], docsB[0])
+          });
+        }
+      }
+    }
+    
+    return bridges;
+  };
+
+  const generateBridgeContent = (docA, docB) => {
+    const templates = [
+      `Análisis comparativo: "${docA.title}" y "${docB.title}" comparten estructura matemática subyacente...`,
+      `Meta-análisis D10Z: Reconciliación entre "${docA.title}" y "${docB.title}"...`,
+      `Documento puente: Conceptos compartidos entre ${docA.cluster} y ${docB.cluster}...`
+    ];
+    
+    return templates[Math.floor(Math.random() * templates.length)];
+  };
+
+  const analyzeCorpus = async () => {
+    setAnalyzing(true);
+    setProgress(0);
+    setResults(null);
+    setBridges([]);
+    setLog([]);
+    
+    const corpus = corpora[selectedCorpus];
+    addLog(`Iniciando análisis de: ${corpus.name}`, 'info');
+    
+    // Simular análisis progresivo
+    for (let p = 0; p <= 100; p += 5) {
+      setProgress(p);
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      if (p === 20) addLog('Calculando estados Z_i de documentos...', 'info');
+      if (p === 40) addLog('Construyendo matriz de conectividad C_ij...', 'info');
+      if (p === 60) addLog('Calculando Laplaciano del grafo...', 'info');
+      if (p === 80) addLog('Extrayendo eigenvalores...', 'warning');
+    }
+    
+    // Calcular métricas reales
+    const C = computeConnectivity(corpus.sampleDocs);
+    const L = computeLaplacian(C);
+    const eigenvalues = computeEigenvalues(L);
+    const lambda2 = eigenvalues[1];
+    
+    const Z_values = corpus.sampleDocs.map(d => d.Z);
+    const Z_mean = Z_values.reduce((sum, z) => sum + z, 0) / Z_values.length;
+    const integrity = Z_values.reduce((sum, z) => sum + Math.pow(z - Z_mean, 2), 0) / Z_values.length;
+    
+    const energy = C.reduce((sum, row, i) => 
+      sum + row.reduce((s, c_ij, j) => 
+        j > i ? s + c_ij * Math.pow(Z_values[i] - Z_values[j], 2) : s, 0), 0) / 2;
+    
+    const isCarousel = lambda2 < 0.1;
+    
+    addLog(`λ_2 calculado: ${lambda2.toFixed(4)}`, isCarousel ? 'error' : 'success');
+    addLog(`Integridad: ${integrity.toFixed(4)}`, 'info');
+    
+    if (isCarousel) {
+      addLog('⚠️ CARRUSEL DETECTADO - Generando documentos puente...', 'warning');
+      const bridgeDocs = generateBridges(corpus.sampleDocs, C, lambda2);
+      setBridges(bridgeDocs);
+      
+      // Simular λ_2 mejorado
+      const lambda2_improved = lambda2 + 0.08 * bridgeDocs.length;
+      addLog(`Proyección con puentes: λ_2 = ${lambda2_improved.toFixed(4)}`, 'success');
+      
+      setResults({
+        corpus: corpus.name,
+        original: { lambda2, integrity, energy, isCarousel },
+        improved: { lambda2: lambda2_improved, expectedTime: 180 / lambda2_improved }
+      });
+    } else {
+      addLog('✓ Corpus coherente - No requiere intervención', 'success');
+      setResults({
+        corpus: corpus.name,
+        original: { lambda2, integrity, energy, isCarousel },
+        improved: null
+      });
+    }
+    
+    setAnalyzing(false);
+  };
+
+  const exportResults = () => {
+    const data = {
+      framework: 'D10Z-v0.3',
+      timestamp: new Date().toISOString(),
+      corpus: selectedCorpus,
+      analysis: results,
+      bridges: bridges,
+      log: log
+    };
+    
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `d10z_${selectedCorpus}_${Date.now()}.json`;
+    a.click();
+  };
+
+  return (
+    <div className="w-full min-h-screen bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950 text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-5xl font-bold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-300">
+            D10Z MULTI-CORPUS ANALYZER
+          </h1>
+          <p className="text-slate-300 text-lg">Detección y resolución de carruseles epistémicos en sistemas reales</p>
+        </div>
+
+        {/* Selector de Corpus */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {Object.entries(corpora).map(([key, corpus]) => {
+            const Icon = corpus.icon;
+            const isSelected = selectedCorpus === key;
+            
+            return (
+              <button
+                key={key}
+                onClick={() => setSelectedCorpus(key)}
+                className={`relative p-6 rounded-xl transition-all duration-300 ${
+                  isSelected 
+                    ? 'bg-gradient-to-br ' + corpus.color + ' shadow-2xl scale-105' 
+                    : 'bg-slate-800/50 hover:bg-slate-800 border border-slate-700'
+                }`}
+              >
+                <div className="flex items-start gap-4">
+                  <Icon size={32} className={isSelected ? 'text-white' : 'text-slate-400'} />
+                  <div className="flex-1 text-left">
+                    <h3 className="font-bold text-lg mb-2">{corpus.name}</h3>
+                    <p className="text-sm opacity-90 mb-3">{corpus.description}</p>
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className={`px-2 py-1 rounded ${
+                        corpus.fragmentationLevel === 'CRÍTICA' ? 'bg-red-500/30' :
+                        corpus.fragmentationLevel === 'EXTREMA' ? 'bg-orange-500/30' :
+                        'bg-yellow-500/30'
+                      }`}>
+                        {corpus.fragmentationLevel}
+                      </span>
+                      <span className="opacity-70">λ₂ ≈ {corpus.expectedLambda2}</span>
+                    </div>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Controles */}
+        <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 mb-6 border border-slate-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-bold mb-2">Análisis Activo</h3>
+              <p className="text-slate-400">Corpus: {corpora[selectedCorpus].name}</p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={analyzeCorpus}
+                disabled={analyzing}
+                className="flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-600 px-6 py-3 rounded-lg font-semibold transition-all"
+              >
+                <Search size={20} />
+                {analyzing ? 'Analizando...' : 'Ejecutar Análisis'}
+              </button>
+              {results && (
+                <button
+                  onClick={exportResults}
+                  className="flex items-center gap-2 bg-slate-700 hover:bg-slate-600 px-6 py-3 rounded-lg transition-all"
+                >
+                  <Download size={20} />
+                  Exportar
+                </button>
+              )}
+            </div>
+          </div>
+          
+          {analyzing && (
+            <div className="mt-4">
+              <div className="flex items-center justify-between text-sm mb-2">
+                <span>Progreso</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="w-full bg-slate-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-cyan-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Resultados */}
+          {results && (
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+              <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                {results.original.isCarousel ? (
+                  <AlertTriangle className="text-orange-400" size={24} />
+                ) : (
+                  <CheckCircle2 className="text-green-400" size={24} />
+                )}
+                Resultados del Análisis
+              </h3>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <div className="text-slate-400 text-sm mb-1">Conectividad (λ₂)</div>
+                    <div className={`text-2xl font-bold ${
+                      results.original.lambda2 < 0.1 ? 'text-red-400' : 'text-green-400'
+                    }`}>
+                      {results.original.lambda2.toFixed(4)}
+                    </div>
+                    <div className="text-xs text-slate-500 mt-1">Umbral: 0.1000</div>
+                  </div>
+                  
+                  <div className="bg-slate-900/50 p-4 rounded-lg">
+                    <div className="text-slate-400 text-sm mb-1">Integridad</div>
+                    <div className="text-2xl font-bold text-cyan-400">
+                      {results.original.integrity.toFixed(4)}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-slate-900/50 p-4 rounded-lg">
+                  <div className="text-slate-400 text-sm mb-1">Energía ISIS (W)</div>
+                  <div className="text-2xl font-bold text-purple-400">
+                    {results.original.energy.toFixed(4)}
+                  </div>
+                </div>
+                
+                {results.improved && (
+                  <div className="border-t border-slate-700 pt-4">
+                    <div className="flex items-center gap-2 mb-3 text-green-400">
+                      <TrendingUp size={20} />
+                      <span className="font-semibold">Con Documentos Puente</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="bg-green-900/20 p-4 rounded-lg border border-green-700/30">
+                        <div className="text-slate-400 text-sm mb-1">λ₂ Proyectado</div>
+                        <div className="text-2xl font-bold text-green-400">
+                          {results.improved.lambda2.toFixed(4)}
+                        </div>
+                      </div>
+                      <div className="bg-green-900/20 p-4 rounded-lg border border-green-700/30">
+                        <div className="text-slate-400 text-sm mb-1">Tiempo convergencia</div>
+                        <div className="text-2xl font-bold text-green-400">
+                          {results.improved.expectedTime.toFixed(1)}d
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Log */}
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+            <h3 className="text-xl font-bold mb-4">Log del Sistema</h3>
+            <div className="h-80 overflow-y-auto space-y-2 font-mono text-sm">
+              {log.map((entry, i) => (
+                <div key={i} className={`flex gap-2 ${
+                  entry.type === 'error' ? 'text-red-400' :
+                  entry.type === 'warning' ? 'text-yellow-400' :
+                  entry.type === 'success' ? 'text-green-400' :
+                  'text-slate-300'
+                }`}>
+                  <span className="text-slate-500">[{entry.time}]</span>
+                  <span>{entry.message}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Documentos Puente */}
+        {bridges.length > 0 && (
+          <div className="mt-6 bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+            <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <ArrowRight className="text-cyan-400" size={24} />
+              Documentos Puente Generados ({bridges.length})
+            </h3>
+            <div className="space-y-4">
+              {bridges.map((bridge, i) => (
+                <div key={i} className="bg-slate-900/50 p-4 rounded-lg border border-cyan-700/30">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-semibold text-cyan-400">{bridge.id}</span>
+                    <div className="flex items-center gap-2 text-sm">
+                      <span className="text-slate-400">Clusters:</span>
+                      <span className="bg-purple-600/30 px-2 py-1 rounded">{bridge.from}</span>
+                      <ArrowRight size={16} />
+                      <span className="bg-pink-600/30 px-2 py-1 rounded">{bridge.to}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-slate-300 mb-2">{bridge.content}</p>
+                  <div className="flex items-center gap-4 text-xs text-slate-400">
+                    <span>C actual: {bridge.currentC.toFixed(3)}</span>
+                    <span>→</span>
+                    <span className="text-green-400">C objetivo: {bridge.targetC.toFixed(3)}</span>
+                    <span className="text-cyan-400">Δ: +{((bridge.targetC - bridge.currentC) / bridge.currentC * 100).toFixed(0)}%</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Ecuación */}
+        <div className="mt-6 bg-gradient-to-r from-indigo-900/50 to-purple-900/50 backdrop-blur-sm rounded-xl p-6 border border-purple-700/50">
+          <h3 className="text-lg font-semibold mb-3">Marco Matemático D10Z</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 font-mono text-sm">
+            <div>
+              <div className="text-slate-400 mb-1">Conectividad</div>
+              <div>C<sub>ij</sub> = (Z<sub>i</sub>Z<sub>j</sub>)<sup>α</sup> e<sup>-βD<sub>JS</sub></sup></div>
+            </div>
+            <div>
+              <div className="text-slate-400 mb-1">Laplaciano</div>
+              <div>L = D - C</div>
+            </div>
+            <div>
+              <div className="text-slate-400 mb-1">Criterio Carrusel</div>
+              <div>λ<sub>2</sub>(L) &lt; 0.1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default D10ZCorpusAnalyzer;
