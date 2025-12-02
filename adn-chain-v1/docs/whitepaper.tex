@@ -1,0 +1,83 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{ADN-Chain v1: Codon-Based Virtual Machine and Blockchain System}
+\author{Jamil Al Thani}
+\date{Version 1.0.0}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+ADN-Chain v1 is a codon-inspired distributed computing platform that combines a
+deterministic virtual machine, a 64-codon instruction set, and a blockchain
+data layer. This whitepaper outlines the core design and implementation
+considerations for researchers and contributors.
+\end{abstract}
+
+\section{Introduction}
+This document introduces the motivations behind ADN-Chain v1, the biological
+inspiration for codon-based computation, and the objectives of the initial
+release.
+
+\section{Computation Model}
+We describe the execution semantics, memory model, and determinism guarantees
+that underpin the ADN virtual machine family.
+
+\section{ISA-64}
+The 64-codon instruction set encodes arithmetic, control flow, memory access,
+and system operations. Each codon maps to a mnemonic and semantics documented in
+this section.
+
+\section{Bytecode}
+The bytecode format specifies module layout, symbol tables, and relocation rules
+needed to produce portable codon programs.
+
+\section{Virtual Machine}
+We outline the ADN-VM and CodonVM, including interpreter pipelines, runtime
+state, host interfaces, and deterministic execution constraints.
+
+\section{ABI and Syscalls}
+This section defines the Application Binary Interface, syscall catalog, calling
+conventions, and safety rules for contract and node integrations.
+
+\section{State and Transactions}
+We describe the state model, account and storage layout, transaction types, and
+state transition function for block validation.
+
+\section{Blocks}
+Blocks bundle transactions, execution receipts, and cryptographic commitments.
+We cover block headers, Merkle structures, and validation rules.
+
+\section{Network}
+ADN-Net v1 is a P2P protocol for propagating blocks, transactions, and state
+snapshots. Messaging primitives and bandwidth considerations are summarized
+here.
+
+\section{Consensus}
+This release targets a deterministic, slot-based consensus inspired by D10Z.
+The section details validator roles, leader selection, and fork choice.
+
+\section{Cryptography}
+We specify key types, signature schemes, hashing primitives, and encoding
+formats used across the stack.
+
+\section{Implementation Notes}
+Implementation guidance for Rust crates, workspace layout, testing strategy, and
+interoperability with WASM toolchains.
+
+\section{Toolchain}
+Build tooling, CLI utilities, and developer workflows for authoring and testing
+codon programs.
+
+\section{Roadmap}
+Future work spans performance optimizations, formal verification, and expanded
+network protocols. A milestone roadmap is provided for contributors.
+
+\section{Conclusion}
+ADN-Chain v1 establishes a foundation for codon-based distributed computation.
+Community contributions are encouraged to mature the protocol and tooling.
+
+\end{document}

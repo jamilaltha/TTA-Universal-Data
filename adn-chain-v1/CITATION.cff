@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "ADN-Chain v1: Codon-Based Virtual Machine and Blockchain System"
+authors:
+  - family-names: "Al Thani"
+    given-names: "Jamil"
+    orcid: "https://orcid.org/0009-0000-8858-4992"
+version: "1.0.0"
+doi: "TODO"
+keywords:
+  - codon computing
+  - blockchain
+  - virtual machine
+  - wasm
+  - rust
+  - d10z
+  - tta
+message: "If you use ADN-Chain v1 in your research, please cite this record."
+repository-code: "https://github.com/OWNER/adn-chain-v1"
+license: MIT
