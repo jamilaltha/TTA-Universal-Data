@@ -1,0 +1,26 @@
+# Python
+pycache/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Data files
+*.npz
+*.h5
+*.hdf5
+*.dat
+*.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
