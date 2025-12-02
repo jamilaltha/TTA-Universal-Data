@@ -1,0 +1,8 @@
+target/
+/docs/book/book/
+*.aux
+*.log
+*.toc
+*.out
+*.pdf
+.DS_Store

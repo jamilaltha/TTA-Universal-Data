@@ -1,0 +1,16 @@
+[book]
+title = "ADN-Chain v1"
+author = "Jamil Al Thani"
+description = "Codon-based virtual machine and blockchain specification"
+multilingual = false
+src = "src"
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+
+[output.linkcheck]
+follow-web-links = false
