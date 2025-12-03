@@ -1,0 +1,87 @@
+{
+  "phases": {
+    "phase3": {
+      "name": "FASE 3 — 2D (CMB-like)",
+      "dimensionality": "2D",
+      "nodes": 24750,
+      "infifotons_generated": 24750,
+      "phi_initial": 0.60,
+      "phi_final": 1.10,
+      "pattern": "fluctuaciones regulares",
+      "physical_domain": "Capa proyectiva 2D",
+      "purpose": "Validar cómo el Infifotón ordena fluctuaciones primordiales",
+      "physics_D10Z": "Campo nodal de baja coherencia → ascenso por infifotonización → patrón fractal-regular"
+    },
+    "phase4": {
+      "name": "FASE 4 — 3D fractal",
+      "dimensionality": "3D",
+      "nodes_min": 22000,
+      "nodes_max": 28000,
+      "phi_initial": 0.70,
+      "phi_final_range": [1.05, 1.10],
+      "fractal": true,
+      "dominant_phenomena": "crecimiento + colapso local",
+      "infifoton_generation": "alta",
+      "objective": "mostrar cómo aparece gravedad, masa, volumen",
+      "physics_D10Z": "Infifotón + energía + solapamiento nodal generan masa, curvatura nodal, peso y volumen"
+    }
+  },
+  "infifoton_role": {
+    "is_energy": false,
+    "description": "El Infifotón es la operación que transforma estados nodales Φ en masa, gravedad, volumen, energía, simetría, colapso/expansión y activación nodal.",
+    "transformations": [
+      "Φ → masa",
+      "Φ → gravedad",
+      "Φ → volumen",
+      "Φ → energía",
+      "Φ → simetría",
+      "Φ → colapso / expansión",
+      "Φ → nodo activado / nodo pasivo"
+    ],
+    "mathematics": {
+      "filaments_interaction": "Interacción filamentos F/V → Energía primaria",
+      "excitation": "Energía + estructura nodal → Excitación Infifotónica",
+      "quantization": "Infifotón εᵢₒf produce cuantización de Φ, estabilidad de Zₙ, migración de coherencia, generación de masa efectiva",
+      "delta_energy": "ΔE_infifoton = ε_if_i",
+      "delta_node": "Z_n → Z_n + δZ_n",
+      "delta_effects": [
+        "aumento de módulo |Z|",
+        "aumento de densidad",
+        "aparición de masa → gravedad"
+      ]
+    },
+    "observations": "Concuerda con scripts: reducción de tensión, crecimiento nodal, fractal estable"
+  },
+  "package": {
+    "name": "d10z",
+    "structure": {
+      "root_files": ["__init__.py", "bigstart.py", "tta.py", "nodes.py", "infifoton.py", "filaments.py", "sahana.py", "isis.py"],
+      "simulation": ["phase3.py", "phase4.py", "utils.py"],
+      "visualization": ["plots.py", "fractal.py", "cmb2d.py"],
+      "data": ["constants.json", "examples/"]
+    },
+    "modules": {
+      "bigstart.py": {
+        "phi_initial_state": 1.0,
+        "filaments": ["F", "V"],
+        "gm_distance_percent": 1e-14,
+        "gm_thickness_percent": 1e-7
+      },
+      "tta.py": "Genera curvas de tiempo, espacio emergente y nodos base",
+      "filaments.py": "Define filamento F (frecuencia) y filamento V (vibración) con intercalado directo",
+      "infifoton.py": {
+        "description": "Operador infifotónico",
+        "class": "Infifoton",
+        "energy": 1e-51,
+        "length": 1e-51,
+        "apply_signature": "apply(self, node) → node + delta(node)"
+      },
+      "sahana.py": "Simulación exacta de relajación",
+      "isis.py": "Simulación exacta de tensiones"
+    }
+  },
+  "simulation_scripts": {
+    "phase3": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndef phase3_simulation(N=24750, eps=1e-51):\n    # N nodos distribuidos en 2D\n    xy = np.random.rand(N, 2)\n\n    # amplitudes iniciales\n    Z = 0.6 + 0.1*np.random.randn(N)\n\n    # infifoton activations\n    infi_hits = np.random.poisson(1.0, N)\n    Z += infi_hits * eps * 1e12   # escala TTA\n\n    # coherencia\n    Phi = 1 - np.var(Z)\n\n    # mapa 2D\n    plt.figure(figsize=(6,6))\n    plt.scatter(xy[:,0], xy[:,1], c=Z, cmap='inferno', s=3)\n    plt.colorbar(label=\"Amplitude (Z)\")\n    plt.title(f\"Phase 3 / CMB-like map\\nΦ={Phi:.4f}\")\n    plt.savefig(\"phase3_CMBlike.png\")\n\n    return Z, Phi, infi_hits\n",
+    "phase4": "import numpy as np\nimport matplotlib.pyplot as plt\n\ndef phase4_simulation(N=25000, eps=1e-51):\n    # nodos en 3D\n    xyz = np.random.rand(N, 3)\n\n    # amplitudes iniciales\n    Z = 0.7 + 0.2*np.random.randn(N)\n\n    # infifotones: evento de densificación\n    infi_hits = np.random.poisson(2.0, N)\n    Z += infi_hits * eps * 1e14   # alta fase TTA\n\n    # interacción nodal\n    Z = np.abs(np.fft.fft(Z))     # fractalidad\n    Z = Z / np.max(Z)\n\n    Phi = 1 - np.var(Z)\n\n    # plot\n    plt.figure(figsize=(7,7))\n    ax = plt.axes(projection='3d')\n    ax.scatter(xyz[:,0], xyz[:,1], xyz[:,2], c=Z, cmap='viridis', s=1)\n    plt.title(f\"Phase 4 / 3D fractal\\nΦ={Phi:.4f}\")\n    plt.savefig(\"phase4_3Dfractal.png\")\n\n    return Z, Phi, infi_hits\n"
+  }
+}
