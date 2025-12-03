@@ -1,7 +1,44 @@
-# d10z/simulations/__init__.py
-"""D10Z Simulations"""
+# ═══════════════════════════════════════════════════════════════════════════════
+# d10z/tta/__init__.py
+# TEMPORAL TENSORIAL ARCHITECTURE
+# ═══════════════════════════════════════════════════════════════════════════════
+"""
+D10Z TTA Module
 
-from .phase3_cmb import run_phase3_cmb
-from .phase4_fractal import run_phase4_fractal
+TTA (Temporal Tensorial Architecture) is the fundamental structure
+from which spacetime emerges.
 
-__all__ = ['run_phase3_cmb', 'run_phase4_fractal']
+TTA consists of:
+- Filaments: Frequency (f) and Vibration (v) carriers
+- Neusars: Quantum nodes in the filament cánulas
+- Nodal dynamics: F = f·v(Zₙ)
+
+Time and space are NOT fundamental - they EMERGE from TTA.
+"""
+
+from .filaments import (
+    Filament,
+    FrequencyFilament,
+    VibrationFilament,
+    FilamentPair,
+    create_filament_network
+)
+
+from .architecture import (
+    TTANetwork,
+    compute_F,
+    tta_evolution
+)
+
+from .neusars import (
+    Neusar,
+    NeusarCluster,
+    neusar_consciousness
+)
+
+__all__ = [
+    'Filament', 'FrequencyFilament', 'VibrationFilament',
+    'FilamentPair', 'create_filament_network',
+    'TTANetwork', 'compute_F', 'tta_evolution',
+    'Neusar', 'NeusarCluster', 'neusar_consciousness'
+]
