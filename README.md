@@ -1,44 +1,51 @@
+# D10Z Package Skeleton
 
-Plantillas APA, Chicago y BibTeX disponibles en:  
-**Citing the Dataset** (Wiki)
+Implementación mínima del marco D10Z-TTA con constantes fundamentales, utilidades de Big Start, dinámica TTA y simuladores de fases.
 
----
+## Estructura del paquete
+- `d10z/` módulo raíz con constantes, Big Start, leyes y arquitectura TTA.
+- `d10z/simulators/` simuladores de las fases 3 (2D y 3D) y fase 4 fractal.
 
-##  Contribuciones
+## Instalación local
 
-Las contribuciones están reguladas para garantizar reproducibilidad científica.  
-Revisión estricta antes de aceptar PRs.
+```bash
+python -m pip install .
+```
 
-Normas completas:  
-**Contributing Guidelines** (Wiki)
+## Uso rápido
 
----
+```python
+from d10z import big_start_phi, sahana_dynamics, compute_tension
+from d10z.simulators import run_phase3_2d
+import numpy as np
 
-##  Roadmap
+# Evolución de coherencia
+phi = big_start_phi(np.linspace(0, 1e-40, 5))
 
-Próximas etapas:
+# Dinámica Sahana sobre conectividad aleatoria
+C = np.eye(4)
+Z0 = np.ones(4, dtype=complex)
+Zf = sahana_dynamics(Z0, C)
 
-- v0.2.0 — Expansión multi-dominio  
-- v1.0.0 — Dataset científico consolidado  
-- Integración completamente automática con Zenodo  
-- Validaciones extendidas por dominio  
-- Preparación para versiones shard para IA  
+# Métrica de tensión
+T = compute_tension(Zf, C)
 
-Documento completo en:  
-**Roadmap** (Wiki)
+# Simulación fase 3 2D
+result = run_phase3_2d(n_rows=4, n_cols=4, seed=123)
+print(result["tension"])
+```
 
----
+## Simuladores
+- `run_phase3_2d`: malla 2D periódica.
+- `run_phase3b_3d`: retícula 3D periódica.
+- `run_phase4_fractal`: topología jerárquica simplificada.
 
-##  Licencia
+Cada función devuelve un diccionario con el estado final, la tensión calculada y la matriz de conectividad empleada.
 
-Este repositorio está bajo licencia **MIT**, salvo las fuentes externas, que conservan sus licencias originales.
+## Publicación
+Para construir y publicar el paquete:
 
----
-
-##  Estado actual
-
-- Dataset v0.1.0 validado  
-- Wiki documentada completamente  
-- Estructura formal establecida  
-- Preparado para Zenodo y releases científicos
-
+```bash
+python -m build
+python -m twine upload dist/*
+```
