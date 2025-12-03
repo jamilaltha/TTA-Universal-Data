@@ -1,0 +1,7 @@
+/feeds/
+├── d10z-latest.json          → JSON Feed v1 (el estándar que usan todos los crawlers modernos)
+├── d10z-atom.xml             → Atom clásico (para los viejos de Nature, arXiv, etc.)
+├── d10z-rss.xml              → RSS 2.0 (porque hasta los bots de 2005 lo entienden)
+├── d10z-nostr.njson          → para Nostr (la red que está comiendo Twitter)
+├── d10z-activitystreams.json → ActivityPub (Mastodon, Bluesky, etc.)
+└── d10z-sitemap.xml          → Google, Bing, Yandex lo devoran
