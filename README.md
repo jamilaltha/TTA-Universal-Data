@@ -1,44 +1,19 @@
+D10Z‑TTA: Unified Nodal Fractal Dynamics Framework (Ignition Validated)
 
-Plantillas APA, Chicago y BibTeX disponibles en:  
-**Citing the Dataset** (Wiki)
+D10Z‑TTA consolida la dinámica nodal fractal en un marco reproducible dirigido a la estabilidad de la “ignición”. El hito actual consigue un factor de ignición validado de Φ≈1,05 (“Big Start”), respaldado por un simulador en Python abierto y un paper listo para LaTeX.
 
----
+Características clave:
 
-##  Contribuciones
+Validación de ignición: Fase estable con Φ≈1,05.
 
-Las contribuciones están reguladas para garantizar reproducibilidad científica.  
-Revisión estricta antes de aceptar PRs.
+Código reproducible: Simulador configurable de interacciones nodales y convergencia.
 
-Normas completas:  
-**Contributing Guidelines** (Wiki)
+LaTeX listo para publicar: El manuscrito se aloja en latex/main.tex (compatible con pdflatex o xelatex).
 
----
+Datos estructurados: Carpeta data/ para resultados de ignición (d10z_v3_results.pkl, ignition_search_results.pkl).
 
-##  Roadmap
+Documentación: Sumario ejecutivo e índice maestro en docs/ para consulta rápida.
 
-Próximas etapas:
+Próximos pasos: Integrar el manuscrito completo, incluir el sumario ejecutivo y ajustar el simulador a las ecuaciones validadas.
 
-- v0.2.0 — Expansión multi-dominio  
-- v1.0.0 — Dataset científico consolidado  
-- Integración completamente automática con Zenodo  
-- Validaciones extendidas por dominio  
-- Preparación para versiones shard para IA  
-
-Documento completo en:  
-**Roadmap** (Wiki)
-
----
-
-##  Licencia
-
-Este repositorio está bajo licencia **MIT**, salvo las fuentes externas, que conservan sus licencias originales.
-
----
-
-##  Estado actual
-
-- Dataset v0.1.0 validado  
-- Wiki documentada completamente  
-- Estructura formal establecida  
-- Preparado para Zenodo y releases científicos
-
+Clona el repositorio, instala requirements.txt y ejecuta el simulador para reproducir la dinámica de ignición. Las contribuciones deben preservar la reproducibilidad científica y destacar las métricas de ignición.
