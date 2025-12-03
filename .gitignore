@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+.envrc
+*.env
+*.egg-info/
+
+# Jupyter and notebooks
+.ipynb_checkpoints/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Build and coverage
+build/
+dist/
+htmlcov/
+.coverage*
+.pytest_cache/
+
+# LaTeX artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.toc
+*.synctex.gz
+
+# Data caches
+*.tmp
