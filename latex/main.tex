@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{siunitx}
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{float}
+
+\title{D10Z-TTA: Unified Nodal Fractal Dynamics Framework with Validated Ignition}
+\author{Project D10Z-TTA Collaboration}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We present the D10Z-TTA unified nodal fractal dynamics framework, including the first reproducible ignition validation with ignition factor \(\Phi \approx 1.05\). The manuscript formalizes the nodal interaction tensors, ignition stability criteria, and a reproducible pipeline implemented in Python. All simulations are parametrized for open benchmarking and align with the published ignition milestone (``Big Start'').
+\end{abstract}
+
+\tableofcontents
+
+\section{Introduction}
+This manuscript introduces the D10Z-TTA framework as a self-consistent description of nodal fractal dynamics under ignition conditions. Replace this paragraph with the full introduction from the Markdown manuscript \texttt{D10Z\_TTA\_Manuscript\_v2\_IGNITION.md}. The introduction should motivate the ignition study, contextualize prior work, and highlight the contribution of achieving stable ignition with \(\Phi \approx 1.05\).
+
+\section{Framework Overview}
+Summarize the governing equations, nodal states, and interaction tensors. Insert the equations from the Markdown source using display math environments such as
+$$
+\Phi = \frac{\mathcal{E}_{\text{released}}}{\mathcal{E}_{\text{input}}} \approx 1.05,
+$$
+and any other core relations that define the ignition dynamics. Provide definitions for symbols, stability constraints, and boundary conditions.
+
+\section{Simulation Pipeline}
+Describe the reference Python implementation (see \texttt{src/d10z\_tta\_simulator.py}) including initialization, iterative updates, convergence checks, and metrics collected during ignition search. Add algorithm listings or pseudocode as needed. Cite configuration defaults and data artifacts stored under \texttt{data/}.
+
+\section{Results and Validation}
+Report the ignition validation runs, convergence plots, and sensitivity analyses. Integrate figures via the \texttt{figure} environment and include captions. Document the validated ignition at \(\Phi \approx 1.05\), confidence intervals, and any ablation or robustness checks.
+
+\section{Discussion}
+Discuss implications of the ignition result, limitations of the current simulator, and prospective upgrades (e.g., higher-order nodal couplings, extended datasets). Align the narrative with the executive summary and roadmap.
+
+\section{Conclusion}
+Provide the final statements of the study, emphasizing reproducibility, open data commitments, and the significance of the stable ignition milestone.
+
+\section*{Acknowledgments}
+Acknowledge contributors, funding sources, and compute resources as appropriate.
+
+\begin{thebibliography}{99}
+\bibitem{tta_framework} Replace with the first bibliographic entry once the reference list from the Markdown manuscript is transcribed.
+\bibitem{tta_ignition} Add subsequent references here following journal formatting requirements.
+\end{thebibliography}
+
+\end{document}
