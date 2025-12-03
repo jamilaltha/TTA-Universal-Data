@@ -1,0 +1,111 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{enumitem}
+
+\title{ADN-Chain v1: Codon-Based Virtual Machine and Blockchain System}
+\author{Jamil Al Thani}
+\date{2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+ADN-Chain v1 introduces a codon-inspired computational model that blends a compact 64-bit instruction set, a deterministic virtual machine, and a modular blockchain stack. The design prioritizes verifiable execution, portable bytecode, and modular consensus to support research-grade reproducibility and production deployment. This paper describes the computation model, instruction set architecture, virtual machine semantics, transaction and state layout, block format, networking protocol, consensus interface, cryptographic foundations, and the reference implementation scaffold.
+\end{abstract}
+
+\section{Introduction}
+Blockchain runtimes increasingly host complex computations while needing deterministic execution, efficient state management, and secure peer-to-peer (P2P) propagation. ADN-Chain v1 follows a biological metaphor---codons as executable units---to produce a concise yet expressive instruction set. The system is designed to be portable across heterogeneous hardware, minimizing host-specific behavior by specifying deterministic primitives and carefully bounded host interfaces.
+
+\section{Computation Model}
+The computation model centers on three principles: determinism, composability, and capability isolation.
+\begin{itemize}[noitemsep]
+  \item \textbf{Determinism}: Every instruction has explicit cost, side effects, and overflow rules. All integer operations are two's complement 64-bit with wraparound unless otherwise noted.
+  \item \textbf{Composability}: Programs are sequences of codons (8-byte opcodes with operands) that can be statically analyzed for gas, stack depth, and resource usage.
+  \item \textbf{Capability isolation}: Host calls are namespaced capabilities negotiated at deployment time, preventing ambient authority and enabling fine-grained auditing.
+\end{itemize}
+
+The VM exposes a dual stack/register architecture. A small register file (R0--R7) supports fixed-latency operations, while an unbounded logical stack (bounded by gas) stores transient values. Memory is linear, word-addressed, and zero-initialized.
+
+\section{ISA-64}
+ISA-64 encodes each instruction in 64 bits: 8 bits for opcode, 8 bits for flags, and 48 bits for operands (immediates or register indices). Instructions fall into logical groups:
+\begin{itemize}[noitemsep]
+  \item \textbf{Arithmetic}: ADD, SUB, MUL, DIV, MOD, with saturating and wrapping variants.
+  \item \textbf{Logic}: AND, OR, XOR, NOT, SHL, SHR, ROTL, ROTR.
+  \item \textbf{Control}: JMP, JZ, JNZ, CALL, RET, TRAP (for explicit aborts).
+  \item \textbf{Stack}: PUSH, POP, DUP, SWAP with bounded depth tracking.
+  \item \textbf{Memory}: LD, ST, LDB, STB for word and byte access; MEMSZ for memory size queries.
+  \item \textbf{Crypto}: HASH (blake3), SIGVERIFY (Ed25519), RAND (VRF-derived, consensus provided).
+  \item \textbf{Context}: GET_TX_FIELD, GET_BLOCK_FIELD, READ_STATE, WRITE_STATE for deterministic host data access.
+\end{itemize}
+
+Opcodes reserve space for future extensions, ensuring forward compatibility. Gas costs are defined per opcode and may depend on operand size (e.g., memory growth). Illegal instructions trap deterministically.
+
+\section{Bytecode Format}
+Bytecode binaries are little-endian sequences of 8-byte codons. A module header declares:
+\begin{enumerate}[noitemsep]
+  \item magic number \texttt{0x41444E31} ("ADN1"),
+  \item version \texttt{0x0001},
+  \item entrypoint offset,
+  \item constant pool length and alignment,
+  \item capability bitmap for host calls.
+\end{enumerate}
+
+Sections follow: code, constant pool, debug metadata, and optional signature block. The signature binds the module hash to an author key, enabling provenance tracking. All multi-byte fields are little-endian and use unsigned 32- or 64-bit integers as specified.
+
+\section{Virtual Machine}
+The VM executes bytecode under a strict state machine:
+\begin{enumerate}[noitemsep]
+  \item \textbf{Initialization}: Load code, allocate linear memory, zero registers and stack pointers.
+  \item \textbf{Execution}: Fetch-decode-execute loop with gas decrement before opcode execution. Memory expansion charges gas proportional to pages.
+  \item \textbf{Host calls}: Accessed through capability-gated opcodes; inputs and outputs are serialized using a canonical ABI (little-endian, length-prefixed arrays for dynamic data).
+  \item \textbf{Termination}: Clean exit on RET from entrypoint or trap on errors (invalid opcode, stack underflow, gas exhaustion).
+\end{enumerate}
+
+Determinism is reinforced by prohibiting access to wall-clock time, entropy sources, and non-deterministic hardware. Randomness is injected only through consensus-provided VRF outputs exposed via context opcodes.
+
+\section{Transactions and State}
+Transactions contain sender, nonce, gas limit, fee schedule, capability bitmap, and payload (bytecode or ABI-encoded call). The state model is a sparse key-value store with Merkleized commitments. Reads and writes occur through READ_STATE and WRITE_STATE, which operate on byte arrays and enforce per-call gas limits. Receipts capture execution status, gas used, emitted logs, and state access proofs.
+
+\section{Blocks}
+Blocks consist of:
+\begin{itemize}[noitemsep]
+  \item header: parent hash, state root, receipts root, timestamp, randomness beacon, validator set digest;
+  \item body: ordered transactions, optional blobs for large payloads;
+  \item signatures: aggregate BLS or Ed25519 multisignatures depending on consensus module.
+\end{itemize}
+
+Block validity requires structural correctness, state transition validity, and consensus proof verification. The design supports light-client proofs via Merkle paths to transactions and receipts.
+
+\section{P2P Network}
+The P2P protocol uses encrypted transport (Noise IK) with authenticated node identities. Core message types include handshake, inventory (for blocks and state chunks), request/response for block headers and bodies, gossip for transactions, and capability negotiation. Bandwidth shaping prioritizes block headers and consensus votes over bulk data. Nodes maintain reputation scores to mitigate spam and eclipse attacks.
+
+\section{Consensus}
+ADN-Chain v1 defines a consensus interface rather than a fixed algorithm. A reference configuration targets a partially synchronous environment using BFT with rotating leaders:
+\begin{enumerate}[noitemsep]
+  \item proposer selection based on VRF outputs and validator weights;
+  \item pre-vote and pre-commit rounds with aggregate signatures;
+  \item finality after \(2f+1\) signatures within a round.
+\end{enumerate}
+
+Alternative modules (e.g., Nakamoto-style probabilistic consensus) can be slotted by implementing the same block validation and signature hooks. The block format includes fields for consensus-specific metadata while preserving canonical hashing rules.
+
+\section{Cryptography}
+Hashing uses BLAKE3 for performance and parallelism. Signatures rely on Ed25519 for transactions and either Ed25519 multisignature aggregation or BLS12-381 for validator committees. Randomness derives from verifiable random functions (VRFs) contributed by validators, combined via threshold aggregation to produce unbiased beacons. All cryptographic primitives are versioned and feature-gated for future upgrades.
+
+\section{Reference Implementation}
+The reference implementation is organized into Rust crates:
+\begin{itemize}[noitemsep]
+  \item \textbf{adn_core}: ISA encoding/decoding, VM runtime, gas accounting, ABI, and cryptographic adapters.
+  \item \textbf{adn_node}: P2P networking, consensus orchestration, storage, and node configuration.
+\end{itemize}
+
+This repository ships scaffolding, documentation, continuous integration, and deposition metadata for Zenodo. The crates will be added as part of subsequent releases, inheriting the CI workflows for linting, building, and testing.
+
+\section{Conclusion}
+ADN-Chain v1 combines a compact instruction set, deterministic VM, and modular blockchain stack tailored for verifiable computation. By publishing an openly specified ISA, VM, networking, and consensus interface together with reference tooling, the project aims to accelerate reproducible research and production deployments of codon-based distributed systems.
+
+\end{document}

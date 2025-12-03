@@ -1,0 +1,13 @@
+{
+  "upload_type": "software",
+  "title": "ADN-Chain v1: Codon-Based Computational Blockchain",
+  "description": "Reference implementation scaffold for ADN-Chain v1 including ISA-64 documentation, VM specification, P2P protocol, block format, and publication metadata.",
+  "creators": [
+    {
+      "name": "Al Thani, Jamil",
+      "orcid": "0009-0000-8858-4992"
+    }
+  ],
+  "license": "MIT",
+  "keywords": ["codon","blockchain","virtual machine","wasm","rust","d10z","tta"]
+}
