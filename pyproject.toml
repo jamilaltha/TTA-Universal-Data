@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=67", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "d10z"
+version = "0.1.0"
+description = "Herramientas D10Z-TTA para consenso y análisis multi-corpus"
+readme = "README.md"
+authors = [{ name = "quantumd10z-ctrl" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/quantumd10z-ctrl/D10Z-TTA"
+Documentation = "https://github.com/quantumd10z-ctrl/D10Z-TTA"
+Repository = "https://github.com/quantumd10z-ctrl/D10Z-TTA"
+
+[project.scripts]
+d10z = "d10z.simulator:main"
+
+[tool.setuptools]
+packages = ["d10z"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+d10z = ["data/*.jsonl"]

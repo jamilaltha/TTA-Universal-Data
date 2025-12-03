@@ -1,44 +1,82 @@
+# D10Z-TTA (Universal Data)
 
-Plantillas APA, Chicago y BibTeX disponibles en:  
-**Citing the Dataset** (Wiki)
+Pipeline D10Z para evaluar integridad en sistemas distribuidos y medir fragmentación de corpus. Ahora se publica como paquete Python para instalación vía `pip install d10z` y con utilidades CLI listas para reproducir la ignición.
 
----
+## Instalación rápida
 
-##  Contribuciones
+```bash
+pip install d10z
+```
 
-Las contribuciones están reguladas para garantizar reproducibilidad científica.  
-Revisión estricta antes de aceptar PRs.
+Para desarrollo local:
 
-Normas completas:  
-**Contributing Guidelines** (Wiki)
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .
+```
 
----
+## Uso básico
 
-##  Roadmap
+### Simulador de consenso
 
-Próximas etapas:
+Ejecuta una simulación determinista del modelo D10Z:
 
-- v0.2.0 — Expansión multi-dominio  
-- v1.0.0 — Dataset científico consolidado  
-- Integración completamente automática con Zenodo  
-- Validaciones extendidas por dominio  
-- Preparación para versiones shard para IA  
+```bash
+python -m d10z.simulator consensus --nodes 30 --gamma 0.08 --alpha 0.6 --beta 1.2 --iterations 400
+```
 
-Documento completo en:  
-**Roadmap** (Wiki)
+El comando imprime un resumen en JSON con integridad final, energía y estados nodales. También puedes invocar la entrada instalada como script:
 
----
+```bash
+d10z consensus --nodes 16 --seed 42
+```
 
-##  Licencia
+### Analizador multi-corpus
 
-Este repositorio está bajo licencia **MIT**, salvo las fuentes externas, que conservan sus licencias originales.
+Calcula la conectividad y sugiere documentos puente para un corpus de ejemplo (`arxiv`, `github` o `medical`):
 
----
+```bash
+python -m d10z.simulator corpus --corpus github
+```
 
-##  Estado actual
+La salida muestra λ₂ aproximado y las parejas de documentos sugeridas para mejorarla.
 
-- Dataset v0.1.0 validado  
-- Wiki documentada completamente  
-- Estructura formal establecida  
-- Preparado para Zenodo y releases científicos
+### Datos incluidos
 
+El dataset de referencia `TTA_UNIVERSAL_V01.jsonl` se incluye en el paquete. Puedes obtener la ruta absoluta con:
+
+```python
+from d10z import data_path
+path = data_path("TTA_UNIVERSAL_V01.jsonl")
+```
+
+## Documentación
+
+Los documentos de diseño y ejemplos extendidos viven en [`docs/`](docs/README.md). Allí se describe cómo reproducir experimentos y cómo extender los modelos.
+
+## Publicación en PyPI
+
+1. Instala las herramientas de build y twine:
+   ```bash
+   pip install build twine
+   ```
+2. Genera las distribuciones desde la raíz del proyecto:
+   ```bash
+   python -m build
+   ```
+   Esto crea `dist/d10z-<versión>.tar.gz` y `dist/d10z-<versión>-py3-none-any.whl`.
+3. Define las credenciales en `~/.pypirc` o variables de entorno y sube los artefactos:
+   ```bash
+   twine upload dist/*
+   ```
+
+## Contribuciones
+
+- Las contribuciones deben mantener reproducibilidad científica y trazabilidad.
+- Utiliza ramas dedicadas (p. ej. `feat/update-readme-license`) y abre un PR explicando los cambios.
+- Antes de solicitar revisión, verifica que `python -m build` se ejecute sin errores.
+
+## Licencia
+
+El código se distribuye bajo la licencia MIT. Consulta [`LICENSE`](LICENSE) para los términos completos.
