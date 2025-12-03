@@ -1,10 +1,10 @@
-# ✨ D10Z-TTA: Unified Nodal Fractal Dynamics Framework (Ignition Validated)
+#  D10Z-TTA: Unified Nodal Fractal Dynamics Framework (Ignition Validated)
 
 D10Z-TTA consolidates nodal fractal dynamics into a reproducible framework targeting ignition-grade stability. The current milestone delivers a validated ignition factor of \(\Phi \approx 1.05\) (``Big Start''), backed by an open Python simulator and LaTeX manuscript-ready paper. The repository is organized for rapid experimentation, manuscript generation, and archival of ignition search artifacts.
 
 ---
 
-## 🚀 Características Clave
+##  Características Clave
 
 * **Ignition validation:** Stable ignition with \(\Phi \approx 1.05\) captured in the reference pipeline.
 * **Reproducible codebase:** Python simulator with configurable parameters for nodal interactions and convergence.
@@ -15,7 +15,7 @@ D10Z-TTA consolidates nodal fractal dynamics into a reproducible framework targe
 
 ---
 
-## 🔬 Reproducción de la Validación de Ignición
+## Reproducción de la Validación de Ignición
 
 Para reproducir la estabilidad de ignición, instale el paquete y ejecute el pipeline de referencia:
 
