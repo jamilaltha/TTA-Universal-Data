@@ -16,23 +16,27 @@ python -m pip install .
 Uso rápido
 
 from d10z import big_start_phi, sahana_dynamics, compute_tension
-from d10z.simulators import run_phase3_2d
+# Importación corregida para ser más específica y evitar depender de __init__.py
+from d10z.simulators.phase3_2d import run_phase3_2d
 import numpy as np
 
-# Evolución de coherencia
-phi = big_start_phi(np.linspace(0, 1e-40, 5))
+# 1. Evolución de coherencia
+# Los time_points deben ser muy pequeños para la dinámica inicial del TTA
+phi = big_start_phi(np.linspace(0, 1e-40, 5)) 
 
-# Dinámica Sahana sobre conectividad aleatoria
-C = np.eye(4)
+# 2. Dinámica Sahana
+# Matriz de conectividad de ejemplo
+C = np.eye(4) 
 Z0 = np.ones(4, dtype=complex)
-Zf = sahana_dynamics(Z0, C)
+# Se asume que sahana_dynamics tiene un valor por defecto para 'steps'
+Zf = sahana_dynamics(Z0, C) 
 
-# Métrica de tensión
+# 3. Métrica de tensión
 T = compute_tension(Zf, C)
 
-# Simulación fase 3 2D
+# 4. Simulación fase 3 2D
 result = run_phase3_2d(n_rows=4, n_cols=4, seed=123)
-print(result["tension"])
+print(f"Tensión de la simulación 2D: {result['tension']:.6f}")
 
 
 Simuladores
