@@ -1,20 +1,20 @@
-# D10Z Package Skeleton
+D10Z Package Skeleton
 
 Implementación mínima del marco D10Z-TTA con constantes fundamentales, utilidades de Big Start, dinámica TTA y simuladores de fases.
 
-## Estructura del paquete
-- `d10z/` módulo raíz con constantes, Big Start, leyes y arquitectura TTA.
-- `d10z/simulators/` simuladores de las fases 3 (2D y 3D) y fase 4 fractal.
+Estructura del paquete
 
-## Instalación local
+d10z/ módulo raíz con constantes, Big Start, leyes y arquitectura TTA.
 
-```bash
+d10z/simulators/ simuladores de las fases 3 (2D y 3D) y fase 4 fractal.
+
+Instalación local
+
 python -m pip install .
-```
 
-## Uso rápido
 
-```python
+Uso rápido
+
 from d10z import big_start_phi, sahana_dynamics, compute_tension
 from d10z.simulators import run_phase3_2d
 import numpy as np
@@ -33,19 +33,21 @@ T = compute_tension(Zf, C)
 # Simulación fase 3 2D
 result = run_phase3_2d(n_rows=4, n_cols=4, seed=123)
 print(result["tension"])
-```
 
-## Simuladores
-- `run_phase3_2d`: malla 2D periódica.
-- `run_phase3b_3d`: retícula 3D periódica.
-- `run_phase4_fractal`: topología jerárquica simplificada.
+
+Simuladores
+
+run_phase3_2d: malla 2D periódica.
+
+run_phase3b_3d: retícula 3D periódica.
+
+run_phase4_fractal: topología jerárquica simplificada.
 
 Cada función devuelve un diccionario con el estado final, la tensión calculada y la matriz de conectividad empleada.
 
-## Publicación
+Publicación
+
 Para construir y publicar el paquete:
 
-```bash
 python -m build
 python -m twine upload dist/*
-```
