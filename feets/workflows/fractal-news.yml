@@ -1,0 +1,26 @@
+name: Fractal News Feed
+
+on:
+  push:
+    paths:
+      - 'news/**'
+      - 'datasets/**'
+      - 'papers/**'
+  schedule:
+    - cron: '0 */12 * * *'  # cada 12 horas
+
+jobs:
+  update-feeds:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generar feeds
+        run: |
+          python generate_feeds.py
+      - name: Commit si hay cambios
+        run: |
+          git config user.name "D10Z Bot"
+          git config user.email "bot@d10z.org"
+          git add feets/
+          git diff --quiet && echo "Sin cambios" || git commit -m "Fractal News actualizadas $(date)"
+          git push
