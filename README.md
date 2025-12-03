@@ -1,44 +1,57 @@
+D10Z Package Skeleton
 
-Plantillas APA, Chicago y BibTeX disponibles en:  
-**Citing the Dataset** (Wiki)
+Implementación mínima del marco D10Z-TTA con constantes fundamentales, utilidades de Big Start, dinámica TTA y simuladores de fases.
 
----
+Estructura del paquete
 
-##  Contribuciones
+d10z/ módulo raíz con constantes, Big Start, leyes y arquitectura TTA.
 
-Las contribuciones están reguladas para garantizar reproducibilidad científica.  
-Revisión estricta antes de aceptar PRs.
+d10z/simulators/ simuladores de las fases 3 (2D y 3D) y fase 4 fractal.
 
-Normas completas:  
-**Contributing Guidelines** (Wiki)
+Instalación local
 
----
+python -m pip install .
 
-##  Roadmap
 
-Próximas etapas:
+Uso rápido
 
-- v0.2.0 — Expansión multi-dominio  
-- v1.0.0 — Dataset científico consolidado  
-- Integración completamente automática con Zenodo  
-- Validaciones extendidas por dominio  
-- Preparación para versiones shard para IA  
+from d10z import big_start_phi, sahana_dynamics, compute_tension
+# Importación corregida para ser más específica y evitar depender de __init__.py
+from d10z.simulators.phase3_2d import run_phase3_2d
+import numpy as np
 
-Documento completo en:  
-**Roadmap** (Wiki)
+# 1. Evolución de coherencia
+# Los time_points deben ser muy pequeños para la dinámica inicial del TTA
+phi = big_start_phi(np.linspace(0, 1e-40, 5)) 
 
----
+# 2. Dinámica Sahana
+# Matriz de conectividad de ejemplo
+C = np.eye(4) 
+Z0 = np.ones(4, dtype=complex)
+# Se asume que sahana_dynamics tiene un valor por defecto para 'steps'
+Zf = sahana_dynamics(Z0, C) 
 
-##  Licencia
+# 3. Métrica de tensión
+T = compute_tension(Zf, C)
 
-Este repositorio está bajo licencia **MIT**, salvo las fuentes externas, que conservan sus licencias originales.
+# 4. Simulación fase 3 2D
+result = run_phase3_2d(n_rows=4, n_cols=4, seed=123)
+print(f"Tensión de la simulación 2D: {result['tension']:.6f}")
 
----
 
-##  Estado actual
+Simuladores
 
-- Dataset v0.1.0 validado  
-- Wiki documentada completamente  
-- Estructura formal establecida  
-- Preparado para Zenodo y releases científicos
+run_phase3_2d: malla 2D periódica.
 
+run_phase3b_3d: retícula 3D periódica.
+
+run_phase4_fractal: topología jerárquica simplificada.
+
+Cada función devuelve un diccionario con el estado final, la tensión calculada y la matriz de conectividad empleada.
+
+Publicación
+
+Para construir y publicar el paquete:
+
+python -m build
+python -m twine upload dist/*
