@@ -1,5 +1,7 @@
 """Simulador Fase 3 en topología 2D simplificada."""
 
+from typing import Optional
+
 import numpy as np
 
 from ..laws import compute_tension
@@ -26,7 +28,14 @@ def _make_lattice_connectivity(n_rows: int, n_cols: int, coupling: float) -> np.
     return C
 
 
-def run_phase3_2d(n_rows: int = 5, n_cols: int = 5, coupling: float = 0.5, steps: int = 500, gamma: float = 0.02, seed: int | None = None):
+def run_phase3_2d(
+    n_rows: int = 5,
+    n_cols: int = 5,
+    coupling: float = 0.5,
+    steps: int = 500,
+    gamma: float = 0.02,
+    seed: Optional[int] = None,
+):
     """Ejecuta la Fase 3 sobre una red 2D periódica.
 
     Parameters

@@ -1,5 +1,7 @@
 """Simulador Fase 4 con topología fractal simplificada."""
 
+from typing import Optional
+
 import numpy as np
 
 from ..laws import compute_tension
@@ -28,7 +30,14 @@ def _fractal_connectivity(levels: int, branching: int, coupling: float) -> np.nd
     return C
 
 
-def run_phase4_fractal(levels: int = 3, branching: int = 2, coupling: float = 0.4, steps: int = 400, gamma: float = 0.01, seed: int | None = None):
+def run_phase4_fractal(
+    levels: int = 3,
+    branching: int = 2,
+    coupling: float = 0.4,
+    steps: int = 400,
+    gamma: float = 0.01,
+    seed: Optional[int] = None,
+):
     """Ejecuta la Fase 4 sobre una topología fractal jerárquica."""
 
     rng = np.random.default_rng(seed)

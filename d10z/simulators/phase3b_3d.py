@@ -1,5 +1,7 @@
 """Simulador Fase 3B en topología 3D."""
 
+from typing import Optional
+
 import numpy as np
 
 from ..laws import compute_tension
@@ -27,7 +29,15 @@ def _make_lattice_connectivity_3d(nx: int, ny: int, nz: int, coupling: float) ->
     return C
 
 
-def run_phase3b_3d(nx: int = 3, ny: int = 3, nz: int = 3, coupling: float = 0.3, steps: int = 300, gamma: float = 0.015, seed: int | None = None):
+def run_phase3b_3d(
+    nx: int = 3,
+    ny: int = 3,
+    nz: int = 3,
+    coupling: float = 0.3,
+    steps: int = 300,
+    gamma: float = 0.015,
+    seed: Optional[int] = None,
+):
     """Ejecución de la fase 3B en retícula 3D periódica."""
 
     rng = np.random.default_rng(seed)
