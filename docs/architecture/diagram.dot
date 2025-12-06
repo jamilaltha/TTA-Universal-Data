@@ -1,0 +1,27 @@
+digraph architecture {
+    node [shape=box, fontname=Helvetica];
+    "d10z" [style=filled, fillcolor=lightgray];
+    "d10z" -> "d10z/core";
+    "d10z" -> "d10z/laws";
+    "d10z" -> "d10z/models";
+    "d10z" -> "d10z/reconciliation";
+    "d10z" -> "d10z/sdk";
+    "d10z" -> "d10z/utils";
+    "d10z" -> "d10z/validation";
+    "docs" [style=filled, fillcolor=lightgray];
+    "docs" -> "docs/architecture";
+    "docs/architecture" -> "architecture/diagram.dot";
+    "docs/architecture" -> "architecture/diagram.txt";
+    "docs" -> "docs/datasets";
+    "docs" -> "docs/governance";
+    "docs" -> "docs/security";
+    "docs" -> "docs/theory";
+    "docs" -> "docs/validation";
+    "examples" [style=filled, fillcolor=lightgray];
+    "notebooks" [style=filled, fillcolor=lightgray];
+    "scripts" [style=filled, fillcolor=lightgray];
+    "scripts" -> "scripts/generate_architecture_diagram.py";
+    "scripts" -> "scripts/generate_architecture_graph.py";
+    "tests" [style=filled, fillcolor=lightgray];
+    "tests" -> "tests/test_snapshots";
+}
