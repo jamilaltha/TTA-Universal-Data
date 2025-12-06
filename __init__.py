@@ -16,25 +16,31 @@ TTA consists of:
 Time and space are NOT fundamental - they EMERGE from TTA.
 """
 
-from .filaments import (
-    Filament,
-    FrequencyFilament,
-    VibrationFilament,
-    FilamentPair,
-    create_filament_network
-)
+try:
+    from filaments import (
+        Filament,
+        FrequencyFilament,
+        VibrationFilament,
+        FilamentPair,
+        create_filament_network,
+    )
 
-from .architecture import (
-    TTANetwork,
-    compute_F,
-    tta_evolution
-)
+    from architecture import (
+        TTANetwork,
+        compute_F,
+        tta_evolution,
+    )
 
-from .neusars import (
-    Neusar,
-    NeusarCluster,
-    neusar_consciousness
-)
+    from neusars import (
+        Neusar,
+        NeusarCluster,
+        neusar_consciousness,
+    )
+except ImportError:  # pragma: no cover - fallback para compatibilidad
+    Filament = FrequencyFilament = VibrationFilament = FilamentPair = None
+    create_filament_network = None
+    TTANetwork = compute_F = tta_evolution = None
+    Neusar = NeusarCluster = neusar_consciousness = None
 
 __all__ = [
     'Filament', 'FrequencyFilament', 'VibrationFilament',
