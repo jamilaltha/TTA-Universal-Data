@@ -1,0 +1,51 @@
+cff-version: 1.2.0
+title: "D10Z-TTA: The Mechanics of Infinity"
+message: "If you use this software, please cite it as below."
+type: software
+authors:
+  - family-names: "Al Thani"
+    given-names: "Jamil"
+    orcid: "https://orcid.org/0009-0000-8858-4992"
+    email: "jamil@d10z.org"
+repository-code: "https://github.com/jamilaltha/TTA-Universal-Data"
+url: "https://d10z.org"
+abstract: >-
+  D10Z-TTA is a unified computational framework for reconciling 
+  contradictory physical theories as valid projections from Point Zero 
+  Omnidimensional at scale GM10⁻⁵¹. The framework includes validation 
+  against SPARC galaxy rotation curves and Hubble tension data.
+keywords:
+  - cosmology
+  - unified theory
+  - galaxy rotation curves
+  - dark matter alternative
+  - Hubble tension
+  - quantum gravity
+  - TTA
+  - D10Z
+license: "CHLL-D10Z-1.1"
+version: "0.1.0"
+date-released: "2025-11-29"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.17728258"
+    description: "Zenodo archive"
+references:
+  - type: article
+    authors:
+      - family-names: "Al Thani"
+        given-names: "Jamil"
+    title: "GM10-51: The Fundamental Scale of Cosmic Architecture"
+    year: 2025
+    url: "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5283235"
+  - type: dataset
+    authors:
+      - family-names: "Lelli"
+        given-names: "Federico"
+      - family-names: "McGaugh"
+        given-names: "Stacy"
+      - family-names: "Schombert"
+        given-names: "James"
+    title: "SPARC: Spitzer Photometry and Accurate Rotation Curves"
+    year: 2016
+    doi: "10.3847/0004-6256/152/6/157"
