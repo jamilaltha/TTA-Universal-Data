@@ -87,7 +87,7 @@ include = ["d10z*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short --ignore=__init__.py"
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
