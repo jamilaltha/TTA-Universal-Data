@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "d10z"
-version = "0.1.0"
+version = "2.0.0"
 description = "D10Z-TTA: The Mechanics of Infinity - A unified framework for reconciling physical theories"
 readme = "README.md"
 license = {text = "CHLL-D10Z v1.1"}
@@ -62,6 +62,10 @@ full = [
     "scipy>=1.7.0",
     "matplotlib>=3.5.0",
     "pandas>=1.4.0",
+    "morphopy>=0.7.5",
+]
+neuro = [
+    "morphopy>=0.7.5",
 ]
 docs = [
     "sphinx>=5.0.0",

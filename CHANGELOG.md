@@ -13,6 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gravitational wave predictions
 - Integration with astropy
 
+## [2.0.0] - 2025-12-08
+
+### Added
+- Neuro optional extra (`pip install d10z[neuro]`) that pulls in `morphopy>=0.7.5` for neuron-scale morphology analysis
+
+### Changed
+- Bumped package version to 2.0.0 to align with the latest PyPI release
+
 ## [0.1.0] - 2025-11-29
 
 ### Added

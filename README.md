@@ -43,6 +43,11 @@
 pip install d10z
 ```
 
+To pull neuroscience morphology tooling used by D10Z's neuron-scale utilities:
+```bash
+pip install d10z[neuro]
+```
+
 For development with all dependencies:
 ```bash
 pip install d10z[full,dev]
