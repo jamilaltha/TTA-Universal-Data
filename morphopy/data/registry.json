@@ -1,0 +1,172 @@
+[
+  {
+    "id": 1,
+    "slug": "particle_physics_lhc",
+    "name": "Particle physics (LHC 5 & 13 TeV)",
+    "scale": "1e-19 m",
+    "status": "Validated",
+    "metric": "R^2 = 0.379–0.450",
+    "sample_file": "default_sample.csv",
+    "description": "Collider-scale sample covering LHC runs at 5 and 13 TeV."
+  },
+  {
+    "id": 2,
+    "slug": "galactic_astrophysics_sparc",
+    "name": "Galactic astrophysics (SPARC + extended)",
+    "scale": "1e-20 → 1e+5 m",
+    "status": "Validated",
+    "metric": "R^2 = 0.925–0.999",
+    "sample_file": "default_sample.csv",
+    "description": "Galaxy rotation curves and extended baryonic profiles derived from SPARC."
+  },
+  {
+    "id": 3,
+    "slug": "cosmology_jwst_hubble",
+    "name": "Cosmology (JWST + Hubble tension)",
+    "scale": "1e+26 m",
+    "status": "Resolved",
+    "metric": "χ^2 = 0.65",
+    "sample_file": "default_sample.csv",
+    "description": "JWST observations and Hubble tension reconciliation tracks."
+  },
+  {
+    "id": 4,
+    "slug": "genomics_universal_genetic_code",
+    "name": "Genomics (universal genetic code)",
+    "scale": "64 codons",
+    "status": "Validated",
+    "metric": "R^2 = 0.950",
+    "sample_file": "default_sample.csv",
+    "description": "Codon usage tables representative of the universal genetic code."
+  },
+  {
+    "id": 5,
+    "slug": "human_proteome",
+    "name": "Human proteome",
+    "scale": "12,293 amino acids",
+    "status": "Validated",
+    "metric": "R^2 = 0.950",
+    "sample_file": "default_sample.csv",
+    "description": "Curated amino acid sequences across the human proteome."
+  },
+  {
+    "id": 6,
+    "slug": "human_metabolome",
+    "name": "Human metabolome (Human GEM)",
+    "scale": "13,082 reactions",
+    "status": "Validated",
+    "metric": "R^2 = 0.950",
+    "sample_file": "default_sample.csv",
+    "description": "Metabolic reactions cataloged from Human GEM models."
+  },
+  {
+    "id": 7,
+    "slug": "temporal_glycolysis",
+    "name": "Temporal glycolysis",
+    "scale": "10 steps",
+    "status": "Validated",
+    "metric": "R^2 = 0.975",
+    "sample_file": "default_sample.csv",
+    "description": "Time-resolved glycolysis fluxes over ten key reaction steps."
+  },
+  {
+    "id": 8,
+    "slug": "plant_nutrient_set",
+    "name": "Plant nutrient set",
+    "scale": "25 metabolites",
+    "status": "Validated",
+    "metric": "R^2 = 0.970",
+    "sample_file": "default_sample.csv",
+    "description": "Macronutrient and micronutrient metabolite abundances in plants."
+  },
+  {
+    "id": 9,
+    "slug": "marine_metagenome",
+    "name": "Marine metagenome",
+    "scale": "36,476 scaffolds",
+    "status": "Validated",
+    "metric": "R^2 = 0.910",
+    "sample_file": "default_sample.csv",
+    "description": "Metagenomic scaffolds sampled from marine environments."
+  },
+  {
+    "id": 10,
+    "slug": "hla_immunogenetics",
+    "name": "HLA immunogenetics",
+    "scale": "11,179 alleles / 7,339 RNA",
+    "status": "Validated",
+    "metric": "I = 2635",
+    "sample_file": "default_sample.csv",
+    "description": "HLA allele frequencies and RNA expression references."
+  },
+  {
+    "id": 11,
+    "slug": "pacbio_sequencing",
+    "name": "PacBio sequencing",
+    "scale": "351 runs",
+    "status": "Validated",
+    "metric": "R^2 = 0.940",
+    "sample_file": "default_sample.csv",
+    "description": "Run-level metadata summarizing 351 PacBio sequencing experiments."
+  },
+  {
+    "id": 12,
+    "slug": "global_covid19",
+    "name": "Global COVID-19 dataset",
+    "scale": "200 countries",
+    "status": "Validated",
+    "metric": "R^2 = 0.9938",
+    "sample_file": "default_sample.csv",
+    "description": "Country-level indicators for global COVID-19 tracking."
+  },
+  {
+    "id": 15,
+    "slug": "crypto_bitcoin_dominance",
+    "name": "Crypto (Bitcoin dominance)",
+    "scale": "5-year window",
+    "status": "Validated",
+    "metric": "R^2 = 0.920",
+    "sample_file": "default_sample.csv",
+    "description": "Rolling five-year Bitcoin dominance measures."
+  },
+  {
+    "id": 16,
+    "slug": "mmwave_5g_propagation",
+    "name": "5G mmWave propagation",
+    "scale": "1,200 points",
+    "status": "Validated",
+    "metric": "R^2 = 0.926",
+    "sample_file": "default_sample.csv",
+    "description": "Propagation measurements for mmWave 5G links."
+  },
+  {
+    "id": 17,
+    "slug": "twitter_realtime_dynamics",
+    "name": "Twitter/X real-time dynamics",
+    "scale": "2024–2025",
+    "status": "Validated",
+    "metric": "R^2 = 0.910",
+    "sample_file": "default_sample.csv",
+    "description": "Temporal engagement metrics from the Twitter/X platform."
+  },
+  {
+    "id": 18,
+    "slug": "adn_chain_genesis",
+    "name": "ADN Chain (GENESIS.ADN.IA)",
+    "scale": "Blockchain layer",
+    "status": "Validated",
+    "metric": "100%",
+    "sample_file": "default_sample.csv",
+    "description": "Blockchain layer snapshots for ADN Chain GENESIS deployments."
+  },
+  {
+    "id": 19,
+    "slug": "fractal_nodal_framework",
+    "name": "Fractal Nodal Framework (mathematical)",
+    "scale": "GM10^-51 m",
+    "status": "Demonstrated",
+    "metric": "100%",
+    "sample_file": "default_sample.csv",
+    "description": "Mathematical constructions for the fractal nodal framework."
+  }
+]

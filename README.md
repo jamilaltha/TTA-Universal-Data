@@ -40,12 +40,33 @@
 ## 📦 Quick Install
 
 ```bash
-pip install d10z
+pip install morphopy  # nuevo conector de datasets MorphoPy
 ```
 
 For development with all dependencies:
 ```bash
 pip install d10z[full,dev]
+```
+
+### MorphoPy (nuevo catálogo cross-domain)
+
+Para subir el paquete a PyPI y probar rápidamente desde GitHub:
+
+```bash
+# instalación directa desde el repo local
+pip install .
+
+# listar los datasets publicados en el catálogo
+morphopy list
+
+# descargar un sample (usa GitHub por defecto, puedes apuntar a tu propio repo)
+morphopy download particle_physics_lhc --dest ./morpho-data
+
+# usar la API en Python
+from morphopy import list_datasets, download_dataset
+print([d.slug for d in list_datasets()])
+local_path = download_dataset("cosmology_jwst_hubble")
+print(f"Sample guardado en {local_path}")
 ```
 
 ---
