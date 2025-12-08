@@ -5,6 +5,9 @@ include CONTRIBUTING.md
 include pyproject.toml
 
 recursive-include d10z *.py
+recursive-include morphopy *.py
+recursive-include morphopy/data *.json
+recursive-include morphopy/data/samples *.csv
 recursive-include tests *.py
 
 recursive-exclude * __pycache__

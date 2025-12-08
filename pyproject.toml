@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "d10z"
+name = "morphopy"
 version = "0.1.0"
-description = "D10Z-TTA: The Mechanics of Infinity - A unified framework for reconciling physical theories"
+description = "MorphoPy: dataset connector for the cross-domain Morpho catalog"
 readme = "README.md"
 license = {text = "CHLL-D10Z v1.1"}
 requires-python = ">=3.8"
@@ -16,6 +16,10 @@ maintainers = [
     {name = "Jamil Al Thani", email = "jamil@d10z.org"}
 ]
 keywords = [
+    "datasets",
+    "data-access",
+    "pypi",
+    "morphopy",
     "physics",
     "cosmology",
     "unified-theory",
@@ -71,6 +75,7 @@ docs = [
 
 [project.scripts]
 d10z = "d10z.cli:main"
+morphopy = "morphopy.cli:main"
 
 [project.urls]
 Homepage = "https://d10z.org"
@@ -81,7 +86,13 @@ Changelog = "https://github.com/jamilaltha/d10z/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["d10z*"]
+include = ["d10z*", "morphopy*"]
+
+[tool.setuptools.package-data]
+morphopy = [
+    "data/registry.json",
+    "data/samples/*.csv",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
