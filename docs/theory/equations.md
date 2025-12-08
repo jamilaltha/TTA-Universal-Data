@@ -1,0 +1,2 @@
+# Ecuaciones extraídas automáticamente (skeleton)
+

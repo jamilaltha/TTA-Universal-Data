@@ -1,0 +1,10 @@
+TTA-Universal-Data / d10z
+
+[DATA] -> [CORE] -> [LAWS] -> [RECONCILIATION ENGINE] -> [VALIDATION] -> [OUTPUTS]
+
+- data/: datasets universales (SPARC, SDSS, etc.)
+- d10z/core: objetos base (PointZero, estructuras fundamentales)
+- d10z/laws: leyes (Sahana Law, Isis Law, etc.)
+- d10z/reconciliation: lógica para reconciliar teorías
+- d10z/validation: pipelines contra datos astronómicos
+- d10z/cli & d10z/sdk: interfaces de consumo

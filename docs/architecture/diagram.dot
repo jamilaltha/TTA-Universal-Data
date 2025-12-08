@@ -1,0 +1,4 @@
+digraph TTAUniversalData {
+    rankdir=LR;
+    DATA -> CORE -> LAWS -> RECONCILIATION -> VALIDATION -> OUTPUTS;
+}
