@@ -1,0 +1,35 @@
+name: Docs
+
+on:
+  push:
+    branches: ["main", "master"]
+    tags: ["v*", "release-*", "*.*.*"]
+  pull_request:
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust (for mdBook)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install mdBook
+        run: cargo install mdbook --locked
+
+      - name: Build mdBook
+        run: |
+          cd docs/book
+          mdbook build
+
+      - name: Install LaTeX (optional)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: sudo apt-get update && sudo apt-get install -y texlive-latex-base
+
+      - name: Build whitepaper (pdflatex)
+        if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+        run: |
+          cd docs
+          pdflatex whitepaper.tex

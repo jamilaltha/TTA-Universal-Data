@@ -1,0 +1,27 @@
+# Rust
+/target
+**/target
+Cargo.lock
+
+# LaTeX
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.pdf
+
+# mdBook
+book/book
+book/html
+book/build
+
+# Editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
