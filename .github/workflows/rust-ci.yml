@@ -1,0 +1,43 @@
+name: Rust CI
+
+on:
+  pull_request:
+  push:
+    branches: ["*"]
+
+jobs:
+  rust-checks:
+    name: Rust fmt, clippy, test
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('**/Cargo.toml') != '' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Run cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: Run cargo clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Run cargo test
+        run: cargo test --all --all-features
+
+  no-rust:
+    name: Skip (no Cargo.toml found)
+    runs-on: ubuntu-latest
+    if: ${{ hashFiles('**/Cargo.toml') == '' }}
+    steps:
+      - name: No Rust projects detected
+        run: echo "No Cargo.toml found; skipping Rust checks."
