@@ -15,8 +15,9 @@ scales because it is a fundamental attractor of nodal systems.
 
 import numpy as np
 from dataclasses import dataclass
-from typing import List, Tuple, Optional
-from ..core.constants import FLOWER_OF_LIFE_NODES, PHI_CRITICAL
+from typing import List, Optional, Tuple
+
+from constants import FLOWER_OF_LIFE_NODES, PHI_CRITICAL
 
 
 @dataclass

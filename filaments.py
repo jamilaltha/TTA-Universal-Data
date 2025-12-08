@@ -21,10 +21,8 @@ The interaction f × v generates ENERGY, which then produces INFIFOTÓNS.
 import numpy as np
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
-from ..core.constants import (
-    FILAMENT_THICKNESS, FILAMENT_SEPARATION,
-    GM_SCALE, EPSILON_IFI
-)
+
+from constants import EPSILON_IFI, FILAMENT_SEPARATION, FILAMENT_THICKNESS, GM_SCALE
 
 
 @dataclass
