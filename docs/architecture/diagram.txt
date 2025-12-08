@@ -1,0 +1,41 @@
+D10Z-TTA :: Architecture Diagram
+===============================
+
+d10z
+├── cli.py
+├── core
+│   └── __init__.py
+├── laws
+│   └── __init__.py
+├── models
+│   └── __init__.py
+├── reconciliation
+│   └── __init__.py
+├── sdk
+│   └── __init__.py
+├── utils
+│   └── __init__.py
+└── validation
+    └── __init__.py
+
+docs
+├── architecture
+│   ├── diagram.dot
+│   └── diagram.txt
+├── datasets
+├── governance
+├── security
+├── theory
+└── validation
+
+examples
+
+notebooks
+
+scripts
+├── generate_api_surface.py
+├── generate_architecture_diagram.py
+└── generate_architecture_graph.py
+
+tests
+└── test_snapshots

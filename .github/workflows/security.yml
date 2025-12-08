@@ -1,0 +1,25 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install tools
+        run: |
+          pip install trivy bandit pip-audit
+      - name: Run trivy filesystem scan
+        run: trivy fs .
+      - name: Run bandit
+        run: bandit -r d10z || true
+      - name: Run pip-audit
+        run: pip-audit || true
